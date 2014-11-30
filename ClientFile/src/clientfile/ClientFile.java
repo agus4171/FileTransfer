@@ -15,7 +15,7 @@ public class ClientFile {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        ServerForm form = new ServerForm();
+        ClientUI form = new ClientUI();
         form.setVisible(true);
     }    
 }

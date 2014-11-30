@@ -26,7 +26,7 @@ public class ServerFile {
             while (true) 
             {                
                 Socket socketClient = server.accept();
-                System.out.println(socketClient.getInetAddress().toString()+" Client masuk");
+                System.out.println(socketClient.getInetAddress().toString() + " " + "Client connect");
                 synchronized(allThread)
                 {
                     ThreadClient tc = new ThreadClient(socketClient,allThread);

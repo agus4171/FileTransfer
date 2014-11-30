@@ -31,6 +31,7 @@ public class ThreadClient implements Runnable {
     private ObjectOutputStream ous = null;
     private ObjectInputStream ois = null;
     private String nama = null;
+    private String namaRecv = null;
     private String fnama = null;
     private DataInputStream diStream = null;
     private DataOutputStream doStream = null;
@@ -38,7 +39,6 @@ public class ThreadClient implements Runnable {
     public int BUFFER_SIZE = 1024;
     private ArrayList<String> lUser;
     private ArrayList<String> lFile;
-    private String path = ".";
     private String files;
     
     public ThreadClient(Socket socketClient, ArrayList<ThreadClient> allThread)
@@ -60,35 +60,33 @@ public class ThreadClient implements Runnable {
             try {
                 while((objf = (ObjectFile) ois.readObject()) != null)
                 {
-                    if(objf.getCommand().equals("connect"))
+                    if(objf.getCommand().equals("CONNECT"))
                     {
                         this.nama = objf.getUser();
-                        
                         new File("F:/cache/"+this.nama).mkdirs();
-                        System.out.println("User masuk : "+this.nama);
+                        System.out.println("User masuk : " + " " + this.nama);
                     }
                     
-                    else if(objf.getCommand().equals("kirim"))
+                    else if(objf.getCommand().equals("SEND"))
                     {
-                        System.out.println("Menulis file");
                         this.fnama = objf.getNama();
-                        File file = new File("F:/cache/" + this.nama +"/"+ objf.getNama());
-                        doStream = new DataOutputStream(new FileOutputStream(file));
+                        this.namaRecv = objf.getUser();
+                        fileLoc = new File("F:/cache/" + this.namaRecv +"/"+ objf.getNama());
+                        doStream = new DataOutputStream(new FileOutputStream(fileLoc));
                         doStream.write(objf.getIsi());
-                        System.out.println("File tertulis :"+this.fnama);
+                        System.out.println("User : " + this.nama + " Mengirim file : " + objf.getNama() + " Pada dir User : " + this.namaRecv);
                     }
                     
-                    else if(objf.getCommand().equals("listUser"))
+                    else if(objf.getCommand().equals("GET USER"))
                     {
                         lUser.clear();
                         for (int i = 0; i < this.allThread.size(); i++) {
                             lUser.add(allThread.get(i).nama);
-                            System.out.println("user"+lUser.get(i));
                         }
                         send(lUser);
                     }
                     
-                    else if(objf.getCommand().equals("listFile"))
+                    else if(objf.getCommand().equals("GET FILE"))
                     {
                         lFile.clear();
                         File folder = new File("F:/cache/" + this.nama);
@@ -104,7 +102,7 @@ public class ThreadClient implements Runnable {
                         send(lFile);
                     }
                     
-                    else if(objf.getCommand().equals("download"))
+                    else if(objf.getCommand().equals("DOWNLOAD"))
                     {
                         this.fnama = objf.getNama();
                         File file = new File("F:/cache/" + this.nama +"/"+ fnama);
